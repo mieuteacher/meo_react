@@ -6,16 +6,27 @@ import OptionNavigate from './components/OptionNavigate'
 function App() {
   const [categories, setCategories] = useState([]);
   const [options, setOptions] = useState([
-    // {
-    //     name: String,
-    //     price: Number,
-    //     stock: Number,
-    //     pictures: [
-    //       {url: String},
-    //       {url: String}
-    //     ]
-    // }
+    {
+        name: "Name Options",
+        price: 1000,
+        stock: 10,
+        pictures: [
+          {url: "abc.jpg"},
+          {url: "xyz.png"}
+        ]
+    },
+    {
+        name: "Name Options Thứ 2",
+        price: 1000,
+        stock: 10,
+        pictures: [
+          {url: "abc.jpg"},
+          {url: "xyz.png"}
+        ]
+    }
   ]);
+  const [optionActive, setOptionActive] = useState(0);
+
   const urlPreviewRef = useRef();
   useEffect(() => {
     axios.get("http://localhost:3001/apis/v1/categories?status=true")
@@ -77,7 +88,7 @@ function App() {
         </div>
         <div className='options'>
           {/* Điều Hướng */}
-          <OptionNavigate/>
+          <OptionNavigate optionActive={optionActive} setOptionActive={setOptionActive} options={options}/>
           {/* Nội Dung Options */}
 
         </div>
