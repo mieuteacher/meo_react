@@ -9,12 +9,16 @@ export default function OptionNavigate(props) {
           <ul className="navbar-nav me-auto mb-2 mb-lg-0">
             {
               props.options.map((option, index) => (
-                <li onClick={() => {
+                <li key={randomId()} className="nav-item">
+                  <a onClick={() => {
                   props.setOptionActive(index)
-                }} key={randomId()} className="nav-item">
-                  <a className={`nav-link ${props.optionActive == index ? "active" : ""}`} aria-current="page" href="#">
+                  
+                }} className={`nav-link ${props.optionActive == index ? "active" : ""}`} aria-current="page" href="#">
                     {option.name}
                   </a>
+                  <span style={{cursor: "pointer"}} onClick={() => {
+                    props.setNameEdit(option.name)
+                  }} data-toggle="modal" data-target="#exampleModal">Edit</span>
                 </li>
               ))
             }

@@ -17,5 +17,29 @@
 }
 
 .active {
-    color: pink !important;
+    color: red !important;
+}
+
+.option_pictures {
+    display: flex;
+}
+
+
+.img_item {
+    position: relative;
+    .img_item_delete_icon {
+        position: absolute;
+        right: 0;
+        top: 0;
+        width: 20px;
+        height: 20px;
+        background-color: white;
+        border-radius: 50%;
+        font-weight: 900;
+        color: red;
+        cursor: pointer;
+        &:hover {
+            transform: scale(1.5);
+        }
+    }
 }

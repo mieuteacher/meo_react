@@ -10,37 +10,35 @@ function App() {
         name: "Name Options",
         price: 1000,
         stock: 10,
-        pictures: [
-          {url: "abc.jpg"},
-          {url: "xyz.png"}
-        ]
+        pictures: []
     },
     {
         name: "Name Options Thứ 2",
-        price: 1000,
+        price: 5000,
         stock: 10,
-        pictures: [
-          {url: "abc.jpg"},
-          {url: "xyz.png"}
-        ]
+        pictures: []
     }
   ]);
+
   const [optionActive, setOptionActive] = useState(0);
 
   const urlPreviewRef = useRef();
+
+  const [nameEdit, setNameEdit] = useState("");
   useEffect(() => {
     axios.get("http://localhost:3001/apis/v1/categories?status=true")
       .then(res => {
         setCategories(res.data.data)
       })
   }, [])
+
+  let timeOutTarget = null;
   return (
     <div className="App">
       <h1>Demo Thêm Sản Phẩm</h1>
       <form onSubmit={(eventForm) => {
         // khử hành vi mặc định của form
         eventForm.preventDefault();
-
         // khai báo biến product
         let newProduct = {
           category_id: Number(eventForm.target.category_id.value),
@@ -48,9 +46,7 @@ function App() {
           des: eventForm.target.des.value,
           avatar: eventForm.target.avatar.files[0]
         }
-
         console.log("newProduct", newProduct)
-
       }} className="product_form">
         <div className='product_form_category'>
           Danh Mục
@@ -88,14 +84,129 @@ function App() {
         </div>
         <div className='options'>
           {/* Điều Hướng */}
-          <OptionNavigate optionActive={optionActive} setOptionActive={setOptionActive} options={options}/>
+          <OptionNavigate setNameEdit={setNameEdit} optionActive={optionActive} setOptionActive={setOptionActive} options={options}/>
           {/* Nội Dung Options */}
+          <div key={randomId()} className='options_box'>
+            <form className='option_form'>
+                <div>
+                  Price:
+                  <input onChange={(e) => {
+                        clearTimeout(timeOutTarget);
+
+                        timeOutTarget = setTimeout(() => {
+
+                          let tempOptions = [...options];
+                          tempOptions[optionActive].price = e.target.value;
+                          setOptions(tempOptions)
+
+                        }, 500)
+                  }} defaultValue={options[optionActive].price} name='price' type="text"/>
+                </div>
+                <div>
+                  Stock:
+                  <input onChange={(e) => {
+                        clearTimeout(timeOutTarget);
+
+                        timeOutTarget = setTimeout(() => {
+                          
+                          let tempOptions = [...options];
+                          tempOptions[optionActive].stock = e.target.value;
+                          setOptions(tempOptions)
+
+                        }, 500)
+                  }}  defaultValue={options[optionActive].stock} name='stock' type="text"/>
+                </div>
+                <div>
+                  Pictures:
+                  <input onChange={(e) => {
+                    let pictureList = [...options[optionActive].pictures];
+                    for (let i in e.target.files) {
+                      if(i == "length") {
+                        break;
+                      }
+                      pictureList.push(
+                        {
+                          url: URL.createObjectURL(e.target.files[i]),
+                          file: e.target.files[i]
+                        }
+                      )
+                    }
+                    let updateOptions = [...options];
+                    updateOptions[optionActive].pictures = pictureList;
+                    setOptions(updateOptions);
+                  }} type="file" multiple/>
+                </div>
+            </form>
+            <div className='option_pictures'>
+              {
+               options[optionActive].pictures.map((img, index) => 
+                <div className='img_item'>
+                  <img key={randomId()} src={img.url} 
+                  style={{ width: "100px", height: "100px", borderRadius: "50%", margin: "0 5px" }}/>
+                  <p onClick={() => {
+                     if (window.confirm("Xóa ok?")) {
+                        let tempOptions = [...options];
+                        tempOptions[optionActive].pictures = 
+                        tempOptions[optionActive].pictures.filter((picture, indexMap) => indexMap != index);
+                        setOptions(tempOptions);
+                     }
+                  }} className='img_item_delete_icon'>X</p>
+                </div>
+               )
+              } 
+            </div>
+          </div>
 
         </div>
         <div>
           <button type='submit'>Tạo Mới</button>
         </div>
       </form>
+      <>
+        {/* Modal */}
+        <div
+          className="modal fade"
+          id="exampleModal"
+          tabIndex={-1}
+          role="dialog"
+          aria-labelledby="exampleModalLabel"
+          aria-hidden="true"
+        >
+          <div className="modal-dialog" role="document">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title" id="exampleModalLabel">
+                  Cập Nhật Tên Options
+                </h5>
+                <button
+                  type="button"
+                  className="close"
+                  data-dismiss="modal"
+                  aria-label="Close"
+                >
+                  <span aria-hidden="true">×</span>
+                </button>
+              </div>
+              <div className="modal-body">
+                Tên Options  :
+                <input type="text" defaultValue={nameEdit}/>
+              </div>
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  data-dismiss="modal"
+                >
+                  Close
+                </button>
+                <button type="button" className="btn btn-primary">
+                  Save changes
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </>
     </div>
   );
 }
