@@ -18,13 +18,23 @@ export default function OptionNavigate(props) {
                   </a>
                   <span style={{cursor: "pointer"}} onClick={() => {
                     props.setNameEdit(option.name)
+                    props.setOptionActive(index)
                   }} data-toggle="modal" data-target="#exampleModal">Edit</span>
+                  <span onClick={() => {
+                    if(window.confirm("Xóa OK?")) {
+                      props.setOptionActive(index)
+                      props.deleteOptions(index);
+                    }
+                  }} style={{margin: "0 10px", cursor: "pointer"}}>Delete</span>
                 </li>
               ))
             }
           </ul>
         </div>
       </div>
+      <button type='button' onClick={() => {
+        props.addOptions();
+      }}>Thêm</button>
     </div>
   )
 }
